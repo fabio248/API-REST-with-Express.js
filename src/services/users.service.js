@@ -1,33 +1,34 @@
-import faker from 'faker';
+import sequelize from '../libs/sequelize.js';
+import boom from '@hapi/boom';
+const { models } = sequelize;
 
 class UsersService {
-  constructor() {
-    this.users = [];
-    this.generate();
+  constructor() {}
+  async create(data) {
+    const newUser = await models.User.create(data);
+    return newUser;
+  }
+  async find() {
+    const rta = await models.User.findAll();
+    return rta;
   }
 
-  generate() {
-    const limit = 100;
-    for (let i = 0; i < limit; i++) {
-      this.users.push({
-        id: faker.datatype.uuid(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        birthday: faker.date.between(
-          '1950-01-01T00:00:00.000Z',
-          '2002-01-01T00:00:00.000Z'
-        ),
-        img: faker.internet.avatar(),
-      });
-    }
+  async findOne(id) {
+    const user = await models.User.findByPk(id);
+    if (!user) throw boom.notFound('User not found');
+    return user;
   }
 
-  find() {
-    return this.users;
+  async update(id, changes) {
+    const user = await this.findOne(id);
+    const rta = await user.update(changes);
+    return rta;
   }
 
-  findOne(id) {
-    return this.users.find((user) => user.id === id);
+  async delete(id) {
+    const user = await this.findOne(id);
+    await user.destroy();
+    return id;
   }
 }
 

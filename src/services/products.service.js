@@ -1,5 +1,6 @@
 import faker from 'faker';
 import boom from '@hapi/boom';
+import sequelize from '../libs/sequelize.js';
 
 class ProductsService {
   constructor() {
@@ -32,7 +33,9 @@ class ProductsService {
   }
 
   async find() {
-    return this.products;
+    const query = 'SELECT * FROM tasks';
+    const [data] = await sequelize.query(query);
+    return data;
   }
 
   async findOne(id) {
