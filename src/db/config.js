@@ -6,5 +6,13 @@ const URL = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${
 
 export default {
   development: { url: URL, dialect: 'postgres' },
-  production: { url: URL, dialect: 'postgres' },
+  production: {
+    url: URL,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+  },
 };
