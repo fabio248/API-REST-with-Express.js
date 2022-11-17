@@ -8,7 +8,9 @@
     "dev": "nodemon index.js --exec babel-node",
     "start": "node index.js",
     "lint": "eslint",
-    "migration:generate": "sequelize-cli migration:generate --name"
+    "migrations:generate": "sequelize-cli migration:generate --name",
+    "migrations:run": "sequelize-cli db:migrate",
+    "migrations:revert": "sequelize-cli db:migrate:undo"
   },
   "repository": {
     "type": "git",

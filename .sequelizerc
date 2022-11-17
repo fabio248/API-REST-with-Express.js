@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   config: "./src/db/config.js",
   "models-path": "./src/db/models/",
   "migrations-path": "./src/db/migrations/",

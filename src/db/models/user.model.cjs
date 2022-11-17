@@ -1,6 +1,6 @@
-import { Model, Sequelize, DataTypes } from 'sequelize';
+const { Model, Sequelize, DataTypes } = require("sequelize");
 
-const USER_TABLE = 'users';
+const USER_TABLE = "users";
 
 const UserSchema = {
   id: {
@@ -17,25 +17,33 @@ const UserSchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
+  role: {
+    allowNull: false,
+    type: DataTypes.STRING,
+    defaultValue: "customer",
+  },
   createdAt: {
     type: DataTypes.DATE,
-    field: 'create_at',
+    field: "create_at",
     defaultValue: Sequelize.NOW,
   },
 };
 
 class User extends Model {
-  static assocciate() {
-    //models assocciate
+  static assocciate(models) {
+    this.hasOne(models.Customer, {
+      as: "customer",
+      foreignKey: "userId",
+    });
   }
   static config(sequelize) {
     return {
       sequelize,
       tableName: USER_TABLE,
-      modelName: 'User',
+      modelName: "User",
       timestamps: false,
     };
   }
 }
 
-export { USER_TABLE, UserSchema, User };
+module.exports = { USER_TABLE, UserSchema, User };

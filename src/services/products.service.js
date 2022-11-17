@@ -1,12 +1,10 @@
 import faker from 'faker';
-import boom from '@hapi/boom';
 import sequelize from '../libs/sequelize.js';
+import boom from '@hapi/boom';
+const { models } = sequelize;
 
 class ProductsService {
-  constructor() {
-    this.products = [];
-    this.generate();
-  }
+  constructor() {}
 
   generate() {
     const limit = 100;
@@ -22,41 +20,38 @@ class ProductsService {
   }
 
   async create(data) {
-    const product = { id: faker.datatype.uuid(), ...data };
-    this.products.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-    });
+    const product = await models.Product.create(data);
     return product;
   }
 
-  async find() {
-    const query = 'SELECT * FROM tasks';
-    const [data] = await sequelize.query(query);
-    return data;
+  async find(query) {
+    const options = {
+      include: ['category'],
+    };
+    const { limit, offset } = query;
+    if ((limit, offset)) {
+      options.limit = limit;
+      options.offset = offset;
+    }
+    const products = await models.Product.findAll(options);
+    return products;
   }
 
   async findOne(id) {
-    const product = this.products.find((producto) => producto.id === id);
+    const product = await models.Product.findByPk(id);
     if (!product) throw boom.notFound('Product not found');
-    if (product.isBlock) throw boom.conflict('product is block');
     return product;
   }
 
   async update(id, changes) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index === -1) throw boom.notFound('Product not found');
-    const product = this.products[index];
-    this.products[index] = { ...product, ...changes };
-    return this.products[index];
+    const product = await this.findOne(id);
+    const rta = await product.update(changes);
+    return rta;
   }
 
-  delete(id) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index === -1) throw boom.notFound('Product not found');
-    this.products.splice(index, 1);
+  async delete(id) {
+    const product = await this.findOne(id);
+    await product.destroy();
     return { id };
   }
 }

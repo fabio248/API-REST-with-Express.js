@@ -50,7 +50,6 @@ router.post(
 );
 /**
  * Actualización completa del producto
- *
  */
 router.patch(
   '/:id',
@@ -67,7 +66,24 @@ router.patch(
     }
   }
 );
-
+/**
+ * Actualización parcial del producto
+ */
+router.put(
+  '/:id',
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const changeUser = await service.update(id, body);
+      res.json({ message: 'Updated', data: changeUser });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 router.delete(
   '/:id',
   validatorHandler(getUserSchema, 'params'),
